@@ -1,18 +1,29 @@
 const express = require('express');
 const cors = require('cors');
+const { connectToServer } = require('./utils/dbConnect');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
 const app = express();
+const studentsRoute = require("./routes/students.route")
 
 //middleware
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('running test')
+//connect to server
+connectToServer((err) => {
+    if (!err) {
+        app.listen(port, () => {
+            console.log("Listening to port", port);
+        })
+    } else {
+        console.log("This is server error", err);
+    }
 })
 
-app.listen(port, () => {
-    console.log("Listening to port", port);
-})
+app.use("/students", studentsRoute)
+
+app.get('/', (req, res) => {
+    res.send('running test')
+});

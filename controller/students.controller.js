@@ -11,7 +11,7 @@ module.exports.addStudent = async (req, res) => {
 
     }
 };
-module.exports.saveStudent = async (req, res) => {
+module.exports.getStudent = async (req, res) => {
     try {
         const db = getDb();
         const student = await db.collection("student").find().toArray();
@@ -30,4 +30,33 @@ module.exports.deleteStudent = async (req, res) => {
     } catch (error) {
 
     }
+}
+module.exports.getSingleStudent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const db = getDb();
+        const query = { _id: ObjectId(id) };
+        const result = await db.collection("student").findOne(query)
+        res.send(result)
+    } catch (error) {
+
+    }
+}
+module.exports.updateInfo = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const db = getDb();
+        const students = req.body;
+        const filter = { _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updateInfo = {
+            $set: students,
+        };
+        const result = await db.collection("student").updateOne(filter, updateInfo, options);
+
+        res.send(result);
+    } catch (error) {
+
+    }
+
 }
